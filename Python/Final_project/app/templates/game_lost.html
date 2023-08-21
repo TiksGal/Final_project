@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        /* Global styles */
+        body {
+            text-align: center; /* Aligns everything to the center */
+            font-family: Arial, sans-serif;
+        }
+
+        /* Button styles */
+        a.button {
+            display: inline-block; /* Makes it block-like so we can give padding */
+            background-color: #4CAF50; /* Green background */
+            color: white; /* White text */
+            padding: 15px 30px; /* 15px vertical and 30px horizontal padding */
+            margin: 10px; /* Space around the buttons */
+            text-decoration: none; /* Removes the underlining */
+            border-radius: 5px; /* Rounded corners */
+            font-size: 18px; /* Bigger font size */
+            transition: background-color 0.3s; /* Smooth transition for hover effect */
+        }
+
+        /* Button hover effect */
+        a.button:hover {
+            background-color: #45a049; /* A bit darker green when hovered */
+        }
+
+        /* Flash message styles */
+        .flash-message {
+            padding: 15px;
+            margin: 10px auto;
+            border: 1px solid transparent;
+            border-radius: 5px;
+            width: 60%; /* You can adjust this width as needed */
+            margin-left: 20%; /* Centering based on the width above */
+        }
+
+        .flash-message.success {
+            background-color: #DFF0D8;
+            border-color: #D6E9C6;
+            color: #3C763D;
+        }
+
+        .flash-message.error {
+            background-color: #F2DEDE;
+            border-color: #EBCCD1;
+            color: #A94442;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- Flash messages section -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash-message {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <img src="https://img-9gag-fun.9cache.com/photo/an4z41B_460s.jpg" alt="" width="300">
+
+    <!-- Using the class 'button' for the anchor tags -->
+    <a href="{{ url_for('start_game') }}" class="button">Start New Game</a>
+    <a href="{{ url_for('scoreboard') }}" class="button">View Scoreboard</a>
+
+</body>
+
+</html>
