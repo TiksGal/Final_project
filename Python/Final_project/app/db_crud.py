@@ -108,11 +108,7 @@ class DbCrud:
             player.correct_guess += correct
             db.session.add(player)
             db.session.commit()
-            logger.info(f"'{player.username}' updated!")
-            
-            # Fetch the player again to check
-            check_player = Player.query.get(player.id)
-            logger.info(f"After update, {check_player.username}'s games_won is {check_player.games_lost} and games_played is {check_player.games_played}")
+            logger.info(f"After update, {player.username}'s games_won is {player.games_lost} and games_played is {player.games_played}")
             return True
         except SQLAlchemyError as e:
             db.session.rollback()  # Rollback any changes if an error occurs
@@ -132,11 +128,8 @@ class DbCrud:
             player.wrong_guess += wrong
             db.session.add(player)
             db.session.commit()
-
-            # Fetch the player again to check
-            check_player = Player.query.get(player.id)
-            logger.info(f"After update, {check_player.username}'s games_won is {check_player.games_won} and games_played is {check_player.games_played}")
-
+            
+            logger.info(f"After update, {player.username}'s games_won is {player.games_won} and games_played is {player.games_played}")
             return True
         except SQLAlchemyError as e:
             db.session.rollback()  # Rollback any changes if an error occurs

@@ -1,21 +1,35 @@
-<h2>Scoreboard</h2>
-<table>
-    <tr>
-        <th>Player Name</th>
+{% extends "base.html" %}
 
-        <th>Games Played</th>
+{% block content %}
 
-        <th>Games Won</th>
-        
-        <th>Games Lost</th>
-    </tr>
-    {% for player in players %}
-    <tr>
-        <td>{{ player.username }}</td>
-        <td>{{ player.games_played }}</td>
-        <td>{{ player.games_won }}</td>
-        <td>{{ player.games_lost }}</td>
-    </tr>
-    {% endfor %}
-</table>
-<a href="{{ url_for('start_game') }}">Start New Game</a>
+<div class="centered-container">
+
+    <h2>Scoreboard</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Player Name</th>
+                <th>Games Played</th>
+                <th>Games Won</th>
+                <th>Games Lost</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for player in players %}
+            <tr>
+                <td>{{ player.username }}</td>
+                <td>{{ player.games_played }}</td>
+                <td>{{ player.games_won }}</td>
+                <td>{{ player.games_lost }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div style="text-align:center;">
+    <a href="{{ url_for('start_game') }}"class="button">New Game</a>
+    <a href="{{ url_for('register') }}" class="button">New player</a>
+    </div>
+</div>
+
+{% endblock %}
+

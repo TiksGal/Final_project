@@ -1,35 +1,21 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
-    <style>
-        /* Global styles */
-        body {
-            text-align: center; /* Aligns everything to the center */
-            font-family: Arial, sans-serif;
-        }
+{% block title %}
+    Game WON
+{% endblock %}
 
-        /* Button styles */
-        a.button {
-            display: inline-block; /* Makes it block-like so we can give padding */
-            background-color: #4CAF50; /* Green background */
-            color: white; /* White text */
-            padding: 15px 30px; /* 15px vertical and 30px horizontal padding */
-            margin: 10px; /* Space around the buttons */
-            text-decoration: none; /* Removes the underlining */
-            border-radius: 5px; /* Rounded corners */
-            font-size: 18px; /* Bigger font size */
-            transition: background-color 0.3s; /* Smooth transition for hover effect */
-        }
-
-        /* Button hover effect */
-        a.button:hover {
-            background-color: #45a049; /* A bit darker green when hovered */
-        }
-    </style>
-</head>
-
-<body>
+{% block content %}
+<div class="center-container">
+    <!-- Flash messages section -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash-message {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 
     <h1>Game WON</h1>
 
@@ -37,9 +23,12 @@
     <img src="https://live.staticflickr.com/8482/8200019878_94b4ee8315_z.jpg" alt="" width="300">
 
     <!-- Using the class 'button' for the anchor tags -->
-    <a href="{{ url_for('start_game') }}" class="button">Start New Game</a>
-    <a href="{{ url_for('scoreboard') }}" class="button">View Scoreboard</a>
+    <div style="text-align:center;">
+        <a href="{{ url_for('start_game') }}" class="button">Start New Game</a>
+        <a href="{{ url_for('scoreboard') }}" class="button">View Scoreboard</a>
+    </div>
+    
+</div>
+{% endblock %}
 
-</body>
 
-</html>

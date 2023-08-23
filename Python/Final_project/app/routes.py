@@ -67,76 +67,66 @@ def register():
     return render_template("register.html", title="Register", form=form)
 
 
-def clear_game_data_from_session():
-    keys_to_remove = ['usable_letters', 'wrong_letters', 'tries', 'word_to_guess', 'visuals']
-    for key in keys_to_remove:
-        session.pop(key, None)
-
 @app.route('/game', methods=['GET', 'POST'])
 def game_route():
-    if 'player_name' not in session:
-        flash("Please log in to play!", "warning")
-        return redirect(url_for('login'))
-
-    player = db_crud.get_player_by_username(session["player_name"])
+    player = functions.is_authenticated()
     if not player:
-        flash("Player session expired. Please login again.", "danger")
         return redirect(url_for('login'))
 
-    # Initialize session variables
-    session.setdefault('usable_letters', "abcdefghijklmnopqrstuvwxyz")
-    session.setdefault('wrong_letters', [])
-    session.setdefault('tries', 10)
-    session.setdefault('word_to_guess', functions.get_random_word())
-    session.setdefault('visuals', ['_' if ch != ' ' else ' ' for ch in session['word_to_guess']])
+    functions.init_game_session()
 
     if request.method == 'POST':
         player.games_played += 1
         db.session.commit()
 
-    hangman_image = functions.get_image(tries=session['tries']) # Assuming you use this image in the template
+    hangman_image = functions.get_image(tries=session['tries'])
+    return render_template('game.html',
+                           tries=session['tries'],
+                           visuals=session['visuals'],
+                           usable_letters=session['usable_letters'],
+                           player=player,
+                           hangman_image=hangman_image,
+                           wrong_letters=session['wrong_letters'])
 
-    return render_template('game.html', tries=session['tries'], visuals=session['visuals'], usable_letters=session['usable_letters'], player=player, hangman_image=hangman_image)
+# @app.route('/add_char', methods=["POST"])
+# def add_char():
+#     player = functions.is_authenticated()
+#     if not player:
+#         return redirect(url_for('login'))
+
+#     guess = request.form["guess"]
+#     game_end_response = functions.handle_guess(player, guess)
+#     if game_end_response:
+#         return game_end_response
+
+#     hangman_image = functions.get_image(tries=session['tries'])
+#     return render_template('game.html',
+#                            tries=session['tries'],
+#                            visuals=session['visuals'],
+#                            usable_letters=session['usable_letters'],
+#                            player=player,
+#                            hangman_image=hangman_image,
+#                            wrong_letters=session['wrong_letters'])
 
 @app.route('/add_char', methods=["POST"])
 def add_char():
-    if 'player_name' not in session:
-        flash("Please log in to play!", "warning")
-        return redirect(url_for('login'))
-
-    player = db_crud.get_player_by_username(session["player_name"])
+    player = functions.is_authenticated()
     if not player:
-        flash("Player session expired. Please login again.", "danger")
         return redirect(url_for('login'))
 
     guess = request.form["guess"]
-    session['usable_letters'] = session['usable_letters'].replace(guess, "")
+    game_end_response = functions.handle_guess(player, guess.strip().lower())  # Ensure guesses are cleaned and standardized
+    if game_end_response:  # If the game has ended
+        return game_end_response
 
-    if guess in session['word_to_guess']:
-        for idx, char in enumerate(session['word_to_guess']):
-            if char == guess:
-                session['visuals'][idx] = guess
-    else:
-        session['wrong_letters'].append(guess)
-        session['tries'] -= 1
-
-    if session['tries'] == 0:
-        correct_guesses = len([ch for ch in session['visuals'] if ch != '_'])
-        wrong_guesses = len(session['wrong_letters'])
-        db_crud.update_player_after_lost_game(player, correct_guesses, wrong_guesses)
-        flash(f"Secret word was - {session['word_to_guess']}", "danger")
-        clear_game_data_from_session()
-        return redirect(url_for('game_lost'))
-    elif "_" not in session['visuals']:
-        correct_guesses = len(session['visuals'])
-        wrong_guesses = len(session['wrong_letters'])
-        db_crud.update_player_after_won_game(player, correct_guesses, wrong_guesses)
-        flash(f"Congratulations! You've guessed the word: {session['word_to_guess']}", "success")
-        clear_game_data_from_session()
-        return redirect(url_for('game_won'))
-    hangman_image = functions.get_image(tries=session['tries']) # Assuming you use this image in the template
-
-    return render_template('game.html', tries=session['tries'], visuals=session['visuals'], usable_letters=session['usable_letters'], player=player, hangman_image=hangman_image)
+    hangman_image = functions.get_image(tries=session['tries'])
+    return render_template('game.html',
+                           tries=session['tries'],
+                           visuals=session['visuals'],
+                           usable_letters=session['usable_letters'],
+                           player=player,
+                           hangman_image=hangman_image,
+                           wrong_letters=session['wrong_letters'])
 
 
 @app.route('/scoreboard')
@@ -154,5 +144,15 @@ def game_lost():
 def game_won():
     return render_template('game_won.html')
 
+@app.errorhandler(403)
+def error_403(error):
+    return render_template("403.html"), 403
 
+@app.errorhandler(404)
+def error_404(error):
+    return render_template("404.html"), 404
+
+@app.errorhandler(500)
+def error_500(error):
+    return render_template("500.html"), 500
 
