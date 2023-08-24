@@ -3,8 +3,8 @@ from flask import session
 from app import app
 from app.functions import Functions
 
-class TestFunctions(unittest.TestCase):
 
+class TestFunctions(unittest.TestCase):
     def setUp(self):
         self.app_context = app.app_context()
         self.app_context.push()
@@ -19,12 +19,12 @@ class TestFunctions(unittest.TestCase):
     def test_get_random_word(self):
         word = self.functions.get_random_word()
         self.assertIsNotNone(word)
-        self.assertTrue(word.isalpha())  
+        self.assertTrue(word.isalpha())
 
     def test_create_game_gui(self):
         gui = self.functions.create_game_gui(5)
-        self.assertEqual(gui, ['_', '_', '_', '_', '_'])
-        
+        self.assertEqual(gui, ["_", "_", "_", "_", "_"])
+
         gui = self.functions.create_game_gui(0)
         self.assertEqual(gui, [])
 
@@ -42,15 +42,16 @@ class TestFunctions(unittest.TestCase):
     def test_init_game_session(self):
         self.functions.init_game_session()
 
-        self.assertIn('usable_letters', session)
-        self.assertIn('wrong_letters', session)
-        self.assertIn('tries', session)
-        self.assertIn('word_to_guess', session)
-        self.assertIn('visuals', session)
+        self.assertIn("usable_letters", session)
+        self.assertIn("wrong_letters", session)
+        self.assertIn("tries", session)
+        self.assertIn("word_to_guess", session)
+        self.assertIn("visuals", session)
 
-        self.assertEqual(session['tries'], 10)
-        self.assertEqual(session['usable_letters'], "abcdefghijklmnopqrstuvwxyz")
-        self.assertEqual(len(session['word_to_guess']), len(session['visuals']))
+        self.assertEqual(session["tries"], 10)
+        self.assertEqual(session["usable_letters"], "abcdefghijklmnopqrstuvwxyz")
+        self.assertEqual(len(session["word_to_guess"]), len(session["visuals"]))
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

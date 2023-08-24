@@ -1,7 +1,7 @@
 from os import path
 import logging
 import logging.config
-from typing import List, Dict
+from typing import List, Dict, Union
 from sqlalchemy.exc import SQLAlchemyError
 
 from app import db
@@ -12,24 +12,24 @@ log_file_path = path.join(path.dirname(path.abspath(__file__)), "logging.conf")
 logging.config.fileConfig(log_file_path)
 logger = logging.getLogger("sLogger")
 
+
 class DbCrud:
     pass
 
-    def get_player(self, id: int) -> Player:
+    def get_player(self, id: int) -> Union[Player, None]:
         try:
             player = Player.query.get(id)
             if player:
-                logger.info(f"'{player.username}' player have been returned successfully!")
+                logger.info(
+                    f"'{player.username}' player have been returned successfully!"
+                )
                 return player
             else:
-                logger.error(
-                    f"Player with '{id}', does not exist"
-                )
+                logger.error(f"Player with '{id}', does not exist")
                 return None
         except SQLAlchemyError as e:
             error = str(e.__dict__["orig"])
             logger.error(f"An error: '{error}' occured while trying to get player!")
-
 
     def get_all_players(self) -> List[Player]:
         try:
@@ -40,17 +40,16 @@ class DbCrud:
             error = str(e.__dict__["orig"])
             logger.error(f"An error: '{error}' occured while getting all players!")
 
-
     def create_player(
         self, username: str, name: str, surname: str, hashed_password: str, email: str
     ) -> Player:
         try:
             player = Player(
-            username=username,
-            name=name,
-            surname=surname,
-            password=hashed_password,
-            email=email,
+                username=username,
+                name=name,
+                surname=surname,
+                password=hashed_password,
+                email=email,
             )
 
             db.session.add(player)
@@ -61,8 +60,6 @@ class DbCrud:
             error = str(e.__dict__["orig"])
             logger.error(f"An error: '{error}' occured while creating player!")
             print(f"An error occurred while creating player: {error}")
-
-
 
     def get_players_game_data(self, players: List[Player]) -> List[Dict[str, int]]:
         try:
@@ -79,24 +76,24 @@ class DbCrud:
             return players_data
         except SQLAlchemyError as e:
             error = str(e.__dict__["orig"])
-            logger.error(f"An error: '{error}' occured while trying to get players data!")
+            logger.error(
+                f"An error: '{error}' occured while trying to get players data!"
+            )
 
-
-    def get_player_by_username(self, username: str) -> Player:
+    def get_player_by_username(self, username: str) -> Union[Player, None]:
         try:
             player = Player.query.filter_by(username=username).first()
             if player:
-                logger.info(f"'{player.username}' player have been returned successfully!")
+                logger.info(
+                    f"'{player.username}' player have been returned successfully!"
+                )
                 return player
             else:
-                logger.error(
-                    f"Player with: '{username}', does not exist!"
-                )
+                logger.error(f"Player with: '{username}', does not exist!")
                 return None
         except SQLAlchemyError as e:
             error = str(e.__dict__["orig"])
             logger.error(f"An error: '{error}' occured while trying to get player!")
-
 
     def update_player_after_lost_game(
         self, player: Player, correct: int, wrong: int
@@ -108,15 +105,18 @@ class DbCrud:
             player.correct_guess += correct
             db.session.add(player)
             db.session.commit()
-            logger.info(f"After update, {player.username}'s games_won is {player.games_lost} and games_played is {player.games_played}")
+            logger.info(
+                f"After update, {player.username}'s games_won is {player.games_lost} and games_played is {player.games_played}"
+            )
             return True
         except SQLAlchemyError as e:
             db.session.rollback()  # Rollback any changes if an error occurs
-            logger.exception(f"An error occurred while updating player '{player.username}'!")
+            logger.exception(
+                f"An error occurred while updating player '{player.username}'!"
+            )
             return False
         finally:
             db.session.close()
-
 
     def update_player_after_won_game(
         self, player: Player, correct: int, wrong: int
@@ -128,12 +128,16 @@ class DbCrud:
             player.wrong_guess += wrong
             db.session.add(player)
             db.session.commit()
-            
-            logger.info(f"After update, {player.username}'s games_won is {player.games_won} and games_played is {player.games_played}")
+
+            logger.info(
+                f"After update, {player.username}'s games_won is {player.games_won} and games_played is {player.games_played}"
+            )
             return True
         except SQLAlchemyError as e:
             db.session.rollback()  # Rollback any changes if an error occurs
-            logger.exception(f"An error occurred while updating player '{player.username}'!")
+            logger.exception(
+                f"An error occurred while updating player '{player.username}'!"
+            )
             return False
         finally:
             db.session.close()

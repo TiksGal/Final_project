@@ -5,7 +5,7 @@ from run import app, db
 
 class Player(db.Model, UserMixin):
     __tablename__ = "player"
-    
+
     id = db.Column(db.Integer, primary_key=True, index=True)
     username = db.Column("username", db.String(20), unique=True, nullable=False)
     name = db.Column("name", db.String(60), nullable=False)

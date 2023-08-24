@@ -15,7 +15,7 @@ app.config["SECRET_KEY"] = "7e00696cd12d5df1dea20f5056a5f47e"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # Flask-Session setup
-app.config['SESSION_TYPE'] = 'filesystem'
+app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Flask-SQLAlchemy setup
@@ -31,9 +31,9 @@ login_manager.login_message_category = "info"
 
 # App context - Important for certain operations like creating tables
 with app.app_context():
-    # Import the Player model 
+    # Import the Player model
     from app.models.models import Player
-    
+
     # Create the tables
     db.create_all()
 
@@ -44,6 +44,3 @@ with app.app_context():
 
     # Import routes at the end to avoid circular imports
     from app import routes
-
-
-
