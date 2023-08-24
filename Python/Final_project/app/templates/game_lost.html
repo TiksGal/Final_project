@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="center-container">
+    <img src="https://img-9gag-fun.9cache.com/photo/an4z41B_460s.jpg" alt="" width="300">
+
+    <!-- Using the class 'button' for the anchor tags -->
+    <div style="text-align:center;">
+        <a href="{{ url_for('start_game') }}" class="button">Start New Game</a>
+        <a href="{{ url_for('scoreboard') }}" class="button">View Scoreboard</a>
+    </div>
+</div>
+
+{% endblock %}
+

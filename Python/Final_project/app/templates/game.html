@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    /* This is the CSS to center everything */
+    .centered-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh; /* This will take the full viewport height */
+        flex-direction: column; /* Stack children vertically */
+    }
+</style>
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="flash-messages">
+            {% for category, message in messages %}
+                <div class="flash-message {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+
+<div class="centered-container">
+
+    <img src="/static/images/hangman{{ tries }}.png" alt="Hangman Image">
+
+    <h3>Remaining Tries: {{ tries }}</h3>
+
+    <div>
+    {% for i in visuals %}
+        <span> {{ i }} </span>
+    {% endfor %}
+    </div>
+
+    <div class="wrong-letters">
+        <h5>Incorrect Letters:</h5>
+        {% for letter in wrong_letters %}
+            <span>{{ letter }}</span>
+        {% endfor %}
+    </div>
+
+    <form action="{{ url_for('add_char') }}" method="post">
+        <div>
+            <!-- Checking if player exists before rendering the input -->
+            {% if player %}
+                <input type="hidden" name="player_id" value="{{ player.id }}">
+            {% endif %}
+            <div style="text-align:center;">
+            <label>Enter a letter or guess the word:</label>
+            </div>
+            <div>
+                <input type="text" name="guess" placeholder="Enter letter or word. ">
+            </div>
+        </div>
+        <div style="text-align:center;">
+        <p><button type="submit"class="button">Submit</button></p>
+        </div>
+    </form>
+    <div class="usable-letters">
+        <h5>Usable Letters:</h5>
+        {% for i in usable_letters %}
+            <span>{{ i }}</span>
+        {% endfor %}
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+
+

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Game WON
+{% endblock %}
+
+{% block content %}
+<div class="center-container">
+    <!-- Flash messages section -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash-message {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <h1>Game WON</h1>
+
+    <!-- Add your image below -->
+    <img src="https://live.staticflickr.com/8482/8200019878_94b4ee8315_z.jpg" alt="" width="300">
+
+    <!-- Using the class 'button' for the anchor tags -->
+    <div style="text-align:center;">
+        <a href="{{ url_for('start_game') }}" class="button">Start New Game</a>
+        <a href="{{ url_for('scoreboard') }}" class="button">View Scoreboard</a>
+    </div>
+    
+</div>
+{% endblock %}
+
+
